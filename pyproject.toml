@@ -1,0 +1,97 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "cutlist"
+version = "0.1.0"
+description = "Editor's-notes router: turn director/editor review prose into timecode-anchored change requests and export to OpenTimelineIO + CMX3600 EDL."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Edgar Hernandez", email = "edgarhernandez00@gmail.com" }]
+keywords = [
+    "video-editing",
+    "post-production",
+    "opentimelineio",
+    "edl",
+    "cmx3600",
+    "timecode",
+    "frame-io",
+    "llm",
+    "agent",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Multimedia :: Video",
+    "Typing :: Typed",
+]
+dependencies = [
+    "replykit>=0.1.0",
+    "opentimelineio>=0.17",
+    # The CMX3600 EDL adapter ships in the plugins bundle, not core OTIO. It is
+    # required for EDL parse-validation (the `cmx_3600` adapter), which is a
+    # correctness guarantee of this tool, so it is a hard runtime dependency.
+    "opentimelineio-plugins>=0.17",
+    "typer>=0.12",
+    "rich>=13.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/eggy-sh/cutlist"
+Repository = "https://github.com/eggy-sh/cutlist"
+
+[project.scripts]
+cutlist = "cutlist.cli:main"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "ruff>=0.6",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/cutlist"]
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "W"]
+ignore = []
+
+[tool.ruff.lint.per-file-ignores]
+# Typer's documented pattern *requires* calling typer.Option/Argument in
+# parameter defaults; B008 ("function call in default argument") is a false
+# positive for this idiom.
+"src/cutlist/cli.py" = ["B008"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.coverage.run]
+source = ["cutlist"]
+branch = true
+# The CLI is covered by integration tests (subprocess / CliRunner), not unit
+# coverage; OTIO/EDL writers are validated by round-trip tests.
+omit = ["src/cutlist/cli.py"]
+
+[tool.coverage.report]
+fail_under = 90
+show_missing = true
+exclude_lines = [
+    "pragma: no cover",
+    "if TYPE_CHECKING:",
+    "raise NotImplementedError",
+    "\\.\\.\\.",
+]

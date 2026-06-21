@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - name: Check out cutlist
+        uses: actions/checkout@v4
+        with:
+          path: cutlist
+
+      # cutlist depends on the sibling replykit engine, which is not published to
+      # PyPI for this portfolio. Check it out alongside and install it editable so
+      # CI builds against the exact engine source. (For a published release, drop
+      # this step and let the pyproject pin resolve replykit from PyPI.)
+      - name: Check out replykit (sibling engine)
+        uses: actions/checkout@v4
+        with:
+          repository: eggy-sh/replykit
+          path: replykit
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+
+      - name: Set up Python ${{ matrix.python-version }}
+        run: uv python install ${{ matrix.python-version }}
+
+      - name: Create venv
+        working-directory: cutlist
+        run: uv venv --python ${{ matrix.python-version }}
+
+      - name: Install replykit (editable, from sibling checkout)
+        working-directory: cutlist
+        run: uv pip install -e ../replykit
+
+      - name: Install cutlist (dev extras)
+        working-directory: cutlist
+        run: uv pip install -e '.[dev]'
+
+      - name: Lint (ruff)
+        working-directory: cutlist
+        run: |
+          uv run ruff check .
+          uv run ruff format --check .
+
+      - name: Test (pytest + coverage)
+        working-directory: cutlist
+        run: uv run pytest --cov=cutlist --cov-report=term-missing
+
+      - name: Smoke-run the examples (hermetic, no API key)
+        working-directory: cutlist
+        run: |
+          uv run python examples/run_cutlist.py
+          uv run cutlist parse examples/notes.txt --json > /dev/null
+          uv run cutlist export examples/notes.txt --format both -o /tmp/ci-review
+          # The deliverables must read back through OTIO + the cmx_3600 adapter.
+          uv run python -c "import opentimelineio as otio; otio.adapters.read_from_file('/tmp/ci-review.otio'); otio.adapters.read_from_file('/tmp/ci-review.edl', 'cmx_3600')"
