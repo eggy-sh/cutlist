@@ -5,7 +5,7 @@ philosophy, and the file-ownership split that lets two people work concurrently.
 
 ## Setup
 
-`cutlist` depends on the local [`replykit`](https://github.com/edgarh92/replykit)
+`cutlist` depends on the local [`replykit`](https://github.com/eggy-sh/replykit)
 engine. Install it editable first, then cutlist's dev extras:
 
 ```bash

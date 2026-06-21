@@ -37,7 +37,7 @@ jobs:
       # editable sibling checkout instead — see CONTRIBUTING.md. For a published
       # release, drop this step and let the pyproject pin resolve replykit from PyPI.)
       - name: Install replykit (from GitHub source)
-        run: uv pip install "replykit @ git+https://github.com/edgarh92/replykit@main"
+        run: uv pip install "replykit @ git+https://github.com/eggy-sh/replykit@main"
 
       - name: Install cutlist (dev extras)
         run: uv pip install -e '.[dev]'

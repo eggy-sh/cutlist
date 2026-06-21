@@ -11,7 +11,7 @@ interchange formats:
 - **OpenTimelineIO** (`.otio`) — markers/clips on a timeline, round-trip safe.
 - **CMX3600 EDL** (`.edl`) — parses cleanly in any NLE.
 
-The structured extraction runs on the [`replykit`](https://github.com/edgarh92/replykit)
+The structured extraction runs on the [`replykit`](https://github.com/eggy-sh/replykit)
 agent engine; timecode math is deterministic and frame-rate aware.
 
 ## Why it's different (for studios)

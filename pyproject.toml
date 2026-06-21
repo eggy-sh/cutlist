@@ -44,8 +44,8 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/edgarh92/cutlist"
-Repository = "https://github.com/edgarh92/cutlist"
+Homepage = "https://github.com/eggy-sh/cutlist"
+Repository = "https://github.com/eggy-sh/cutlist"
 
 [project.scripts]
 cutlist = "cutlist.cli:main"

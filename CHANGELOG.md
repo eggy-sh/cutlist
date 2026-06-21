@@ -41,4 +41,4 @@ and exports them to OpenTimelineIO and CMX3600 EDL.
   CI matrix (Python 3.11 / 3.12) running ruff, pytest + coverage, and an
   example smoke run with OTIO/EDL read-back.
 
-[0.1.0]: https://github.com/edgarh92/cutlist/releases/tag/v0.1.0
+[0.1.0]: https://github.com/eggy-sh/cutlist/releases/tag/v0.1.0
