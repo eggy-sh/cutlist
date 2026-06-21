@@ -11,9 +11,15 @@ These fixtures are the contract both SWE-Core (unit tests) and SWE-CLI
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 import pytest
+
+# Pin a wide terminal width so Rich-rendered CLI "--help" output is never
+# wrapped/truncated under CI's narrow non-TTY width (which hides option flags
+# from the help tests). Set at import time, before any CLI is imported/invoked.
+os.environ["COLUMNS"] = "200"
 
 # ---------------------------------------------------------------------------
 # Canonical sample inputs
