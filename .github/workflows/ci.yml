@@ -44,16 +44,16 @@ jobs:
 
       - name: Lint (ruff)
         run: |
-          uv run ruff check .
-          uv run ruff format --check .
+          .venv/bin/ruff check .
+          .venv/bin/ruff format --check .
 
       - name: Test (pytest + coverage)
-        run: uv run pytest --cov=cutlist --cov-report=term-missing
+        run: .venv/bin/pytest --cov=cutlist --cov-report=term-missing
 
       - name: Smoke-run the examples (hermetic, no API key)
         run: |
-          uv run python examples/run_cutlist.py
-          uv run cutlist parse examples/notes.txt --json > /dev/null
-          uv run cutlist export examples/notes.txt --format both -o /tmp/ci-review
+          .venv/bin/python examples/run_cutlist.py
+          .venv/bin/cutlist parse examples/notes.txt --json > /dev/null
+          .venv/bin/cutlist export examples/notes.txt --format both -o /tmp/ci-review
           # The deliverables must read back through OTIO + the cmx_3600 adapter.
-          uv run python -c "import opentimelineio as otio; otio.adapters.read_from_file('/tmp/ci-review.otio'); otio.adapters.read_from_file('/tmp/ci-review.edl', 'cmx_3600')"
+          .venv/bin/python -c "import opentimelineio as otio; otio.adapters.read_from_file('/tmp/ci-review.otio'); otio.adapters.read_from_file('/tmp/ci-review.edl', 'cmx_3600')"
